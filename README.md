@@ -1,6 +1,6 @@
 # HIV Health Guidance Chatbot - Data Science Africa 2025 Practicum
 
-Welcome to the HIV Health Guidance Chatbot project! 🎉 This practicum is designed for Data Science Africa 2025 to demonstrate how to build a helpful chatbot using Large Language Models (LLMs), vector databases, and Streamlit for the user interface.
+Welcome to the HIV Health Guidance Chatbot project! 🎉 This practicum is designed to demonstrate how to build a helpful chatbot using Large Language Models (LLMs), vector databases, and Streamlit for the user interface.
 
 This README will guide you step-by-step from setting up the project to understanding its core components. Whether you're new to Python, LLMs, or even coding, we aim to make this journey smooth and educational!
 
@@ -179,7 +179,7 @@ The project has two main Python scripts:
 1.  **Download or place your PDF file** into the root directory of the project. The current script `pinecone_vector.py` is set to look for a file named `WHO_HIV.pdf`.
     * If your PDF has a different name, you'll need to update this line in `pinecone_vector.py`:
         ```python
-        pdf_file_path = 'YOUR_PDF_FILENAME_HERE.pdf' # Change this if your PDF has a different name
+        pdf_file_path = 'WHO_HIV.pdf' # name of pdf
         ```
     * For this practicum, ensure you have a `WHO_HIV.pdf` file in the main `DSA_HIV` folder. You can find suitable WHO HIV documents online or use one provided for the practicum.
 
