@@ -23,7 +23,7 @@ This README will guide you step-by-step from setting up the project to understan
     * [Step 1: Prepare Your Knowledge Base (PDF)](#step-1-prepare-your-knowledge-base-pdf)
     * [Step 2: Populate the Vector Database (`pinecone_vector.py`)](#step-2-populate-the-vector-database-pinecone_vectorpy)
     * [Step 3: Run the Chatbot Application (`main.py`)](#step-3-run-the-chatbot-application-mainpy)
-* [코드 이해하기 (Understanding the Code)](#코드-이해하기-understanding-the-code)
+* [Understanding the Code](#understanding-the-code)
     * [`pinecone_vector.py` - The Data Processor](#pinecone_vectorpy---the-data-processor)
     * [`main.py` - The Chatbot Application](#mainpy---the-chatbot-application)
 * [📂 Project Structure](#-project-structure)
@@ -94,7 +94,7 @@ Before you begin, make sure you have the following installed on your computer:
 2.  **Navigate to the directory** where you want to store the project (e.g., `cd Documents/Projects`).
 3.  **Clone the repository** using the following command:
     ```bash
-    git clone [https://github.com/Ajisco/DSA_HIV.git](https://github.com/Ajisco/DSA_HIV.git)
+    git clone https://github.com/Ajisco/DSA_HIV.git
     ```
 4.  **Navigate into the project directory:**
     ```bash
@@ -223,7 +223,7 @@ Once your Pinecone database is populated, you can start the chatbot!
 
 ---
 
-## 코드 이해하기 (Understanding the Code)
+## Understanding the Code
 
 Let's break down what each Python script does.
 
