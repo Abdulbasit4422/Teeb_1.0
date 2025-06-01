@@ -1,0 +1,10 @@
+langchain==0.1.13
+langchain-community==0.0.29
+langchain-google-genai
+pinecone-client==3.0.2
+streamlit
+python-dotenv==1.0.0
+pypdf
+tqdm==4.66.2
+nest-asyncio==1.6.0
+google-generativeai==0.5.0
