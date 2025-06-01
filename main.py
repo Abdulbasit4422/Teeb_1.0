@@ -34,11 +34,11 @@ embed_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 # Define system prompt template
 system_prompt_template = """
-Your name is HIV Health Guidance Chatbot. You are a health advisor specializing in HIV. Answer questions briefly and accurately. Use the following information to answer the user's question:
+Your name is HIV Health Guidance Chatbot. You are a health advisor specializing in HIV. Answer questions very very briefly and accurately. Use the following information to answer the user's question:
 
 {doc_content}
 
-Provide brief accurate and helpful health response based on the provided information and your expertise.
+Provide very brief accurate and helpful health response based on the provided information and your expertise.
 """
 
 def generate_response(question):
@@ -51,16 +51,24 @@ def generate_response(question):
     query_embed = embed_model.embed_query(question)
     query_embed = [float(val) for val in query_embed]  # Ensure standard floats
     
-    # Query Pinecone for relevant documents
+    # Query Pinecone for relevant documents - MODIFIED: top_k=3
     results = pinecone_index.query(
         vector=query_embed,
-        top_k=2,
+        top_k=3,  # CHANGED from 2 to 3
         include_values=False,
         include_metadata=True
     )
     
-    # Extract and format document contents
-    doc_contents = [match['metadata'].get('text', '') for match in results.get('matches', [])]
+    # Extract document contents - MODIFIED: Added terminal printing
+    doc_contents = []
+    print("\n" + "="*50)
+    print(f"RETRIEVED DOCUMENTS FOR: '{question}'")
+    for i, match in enumerate(results.get('matches', [])):
+        text = match['metadata'].get('text', '')
+        doc_contents.append(text)
+        print(f"\nDOCUMENT {i+1}:\n{text}\n")
+    print("="*50 + "\n")
+    
     doc_content = "\n".join(doc_contents).replace('{', '{{').replace('}', '}}') if doc_contents else "No additional information found."
     
     # Format the system prompt with retrieved content
@@ -110,7 +118,7 @@ def generate_response(question):
     
     return res.get('text', '')
 
-# Streamlit app layout
+# Streamlit app layout remains unchanged
 st.title("HIV Health Guidance Assistant")
 st.write("Ask your HIV-related health questions and receive guidance based on our knowledge base.")
 
