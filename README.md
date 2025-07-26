@@ -1,4 +1,4 @@
-# HIV Health Guidance Chatbot - Data Science Africa 2025 Practicum
+# HIV Health Guidance Chatbot With RAG
 
 Welcome to the HIV Health Guidance Chatbot project! 🎉 This practicum is designed to demonstrate how to build a helpful chatbot using Large Language Models (LLMs), vector databases, and Streamlit for the user interface.
 
@@ -618,7 +618,7 @@ DSA_HIV/
 
 ## 🤝 Contributing
 
-This project is part of the Data Science Africa 2025 Practicum. If you have suggestions or improvements, please feel free to:
+If you have suggestions or improvements, please feel free to:
 
 1.  Fork the Project ([https://github.com/Ajisco/DSA\_HIV/fork](https://www.google.com/search?q=https://github.com/Ajisco/DSA_HIV/fork))
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -632,18 +632,13 @@ We appreciate any contributions that make this learning experience better for ev
 
 ## 📄 License
 
-This project is likely distributed under a license like MIT or Apache 2.0. Please refer to the `LICENSE` file in the repository (if one exists) or ask the maintainers. For now, assume it's for educational purposes within the DSA 2025 practicum.
+This project is likely distributed under a license like MIT or Apache 2.0.
 
 -----
 
 ## 🙏 Acknowledgments
 
-  * Data Science Africa for organizing this practicum.
   * The creators of Langchain, Streamlit, Pinecone, and Google Generative AI for their powerful tools.
   * The open-source community.
-
------
-
-We hope this guide helps you get started and understand the project. Happy coding, and enjoy Data Science Africa 2025\! If you have any questions during the practicum, don't hesitate to ask your instructors or peers.
 
 ```
