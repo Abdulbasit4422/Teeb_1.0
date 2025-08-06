@@ -1,10 +1,11 @@
-langchain==0.1.13
-langchain-community==0.0.29
-langchain-google-genai
-pinecone-client==3.0.2
-streamlit
-python-dotenv==1.0.0
-pypdf
-tqdm==4.66.2
-nest-asyncio==1.6.0
-google-generativeai==0.5.0
+streamlit>=1.33.0
+python-dotenv>=1.0.1
+langchain-google-genai>=0.0.13
+langchain>=0.1.13
+pinecone-client>=3.2.2
+nest-asyncio>=1.6.0
+tqdm>=4.66.2
+PyPDF2>=3.0.1
+langchain-community>=0.0.29
+google-generativeai>=0.5.0
+protobuf>=4.25.3  # Added to prevent potential protobuf issues

@@ -29,12 +29,12 @@ if not GOOGLE_API_KEY:
 
 # Initialize Pinecone and embedding model
 pc = Pinecone(api_key=PINECONE_API_KEY)
-pinecone_index = pc.Index("hiv")
+pinecone_index = pc.Index("pharm")
 embed_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 # Define system prompt template
 system_prompt_template = """
-Your name is HIV Health Guidance Chatbot. You are a health advisor specializing in HIV. Answer questions very very briefly and accurately. Use the following information to answer the user's question:
+Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing in Pharmacology in CoMUI. Answer questions very very elaborately and accurately. Use the following information to answer the user's question:
 
 {doc_content}
 
@@ -54,7 +54,7 @@ def generate_response(question):
     # Query Pinecone for relevant documents - MODIFIED: top_k=3
     results = pinecone_index.query(
         vector=query_embed,
-        top_k=3,  # CHANGED from 2 to 3
+        top_k=5,  # CHANGED from 2 to 3
         include_values=False,
         include_metadata=True
     )
@@ -101,7 +101,7 @@ def generate_response(question):
     # Initialize Gemini 2.0 Flash model with explicit client
     chat = ChatGoogleGenerativeAI(
         model="gemini-2.0-flash",
-        temperature=0.1,
+        temperature=0.2,
         google_api_key=GOOGLE_API_KEY
     )
     
@@ -119,13 +119,13 @@ def generate_response(question):
     return res.get('text', '')
 
 # Streamlit app layout remains unchanged
-st.title("HIV Health Guidance Assistant")
-st.write("Ask your HIV-related health questions and receive guidance based on our knowledge base.")
+st.title("Teeb 1.0")
+st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your Block 2 slides.")
 
 # Initialize chat history in session state
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
-        {"role": "assistant", "content": "Hello! I'm your HIV Health Guidance Assistant. How can I assist you today?"}
+        {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?"}
     ]
 
 # Display chat history
@@ -134,13 +134,13 @@ for message in st.session_state.chat_history:
         st.markdown(message["content"])
 
 # Handle user input
-user_input = st.chat_input("Ask your health question:")
+user_input = st.chat_input("Ask your Pharmacology question and let's see how i can help:")
 if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     
-    with st.spinner("Thinking..."):
+    with st.spinner("Deep Reasoning Activated..."):
         response = generate_response(user_input)
     
     with st.chat_message("assistant"):
