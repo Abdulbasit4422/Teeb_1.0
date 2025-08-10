@@ -1,6 +1,6 @@
 .env
 flask_session
 *.csv
-myenv/
+venv/
 migrations
 .DS_Store
