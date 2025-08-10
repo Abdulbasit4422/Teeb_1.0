@@ -1,4 +1,3 @@
-.env
 flask_session
 *.csv
 venv/
