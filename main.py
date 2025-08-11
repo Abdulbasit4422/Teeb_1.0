@@ -120,8 +120,8 @@ def generate_response(question):
     return res.get('text', '')
 
 # Streamlit app layout remains unchanged
-st.title("Teeb 1.0")
-st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your Block 2 slides.")
+st.title("Tibb 1.0")
+st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
 
 # Initialize chat history in session state
 if "chat_history" not in st.session_state:
@@ -135,7 +135,7 @@ for message in st.session_state.chat_history:
         st.markdown(message["content"])
 
 # Handle user input
-user_input = st.chat_input("Ask your Pharmacology question and let's see how i can help:")
+user_input = st.chat_input("Ask your Pharmacology questionS and let's see how i can help:")
 if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)

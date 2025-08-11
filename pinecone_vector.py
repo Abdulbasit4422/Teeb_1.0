@@ -22,7 +22,7 @@ embed_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 # Initialize Pinecone client
 pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
-index_name = 'Teeb'
+index_name = 'pharm'
 
 # Check if index exists; if not, create it
 existing_indexes = pc.list_indexes()
