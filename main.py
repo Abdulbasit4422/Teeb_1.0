@@ -1,3 +1,4 @@
+# filename: tibb_ui_v2.py
 import os
 import asyncio
 import nest_asyncio
@@ -9,6 +10,12 @@ from langchain.chains import LLMChain
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone
+from datetime import datetime
+
+# ---------------------------
+# Backend / Core logic: UNCHANGED
+# (kept exactly as provided; UI uses it)
+# ---------------------------
 
 # Apply nest_asyncio patch
 nest_asyncio.apply()
@@ -33,7 +40,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 pinecone_index = pc.Index("pharm")
 embed_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-# Define system prompt template
+# Define system prompt template (unchanged)
 system_prompt_template = """
 Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing in Pharmacology in CoMUI. Answer questions very very elaborately and accurately. Use the following information to answer the user's question:
 
@@ -78,15 +85,15 @@ def generate_response(question):
     # Rebuild chat history from session state
     chat_history = ChatMessageHistory()
     for msg in st.session_state.chat_history:
-        if msg["role"] == "user":
-            chat_history.add_user_message(msg["content"])
-        elif msg["role"] == "assistant":
-            chat_history.add_ai_message(msg["content"])
+        if msg.get("role") == "user":
+            chat_history.add_user_message(msg.get("content"))
+        elif msg.get("role") == "assistant":
+            chat_history.add_ai_message(msg.get("content"))
     
     # Initialize memory with chat history
     memory = ConversationBufferMemory(
         memory_key="chat_history",
-        chat_history=chat_history,
+        chat_memory=chat_history,
         return_messages=True
     )
     
@@ -119,455 +126,248 @@ def generate_response(question):
     
     return res.get('text', '')
 
-# --- UI/UX Enhancements ---
+# ---------------------------
+# UI / UX - FUTURISTIC STYLING
+# ---------------------------
 
-# Page configuration
+# Page config
 st.set_page_config(
-    page_title="Tibb 1.0 - AI Pharmacology Assistant",
-    page_icon="💊",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="Tibb 1.0 — Pharmacology MB2 Assistant",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+    page_icon="🩺"
 )
 
-# Initialize theme state
+# Initialize UI session state items
+if "chat_history" not in st.session_state:
+    # Keep the same assistant greeting but add timestamp metadata for UI
+    st.session_state.chat_history = [
+        {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "ts": datetime.now().isoformat()}
+    ]
 if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = False
+    st.session_state.dark_mode = True
+if "sending" not in st.session_state:
+    st.session_state.sending = False
 
-# Custom CSS for futuristic and medical theme
-def get_css_theme():
-    theme_class = "dark" if st.session_state.dark_mode else "light"
-    return f"""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
-
-    :root {{
-        --primary-color: #00c6ff; /* Bright Blue */
-        --secondary-color: #0072ff; /* Darker Blue */
-        --accent-color: #00ff99; /* Teal/Green Accent */
-        --background-color-light: #f0f2f6; /* Light Gray */
-        --background-color-dark: #1a1a2e; /* Dark Blue/Purple */
-        --card-background-light: #ffffff; /* White */
-        --card-background-dark: #2e2e4a; /* Darker Purple */
-        --text-color-light: #333333; /* Dark Gray */
-        --text-color-dark: #e0e0e0; /* Light Gray */
-        --border-color: rgba(0, 255, 153, 0.3); /* Semi-transparent accent */
-        --shadow-color: rgba(0, 0, 0, 0.1);
-        --font-family-heading: 'Orbitron', sans-serif;
-        --font-family-body: 'Roboto', sans-serif;
-    }}
-
-    .{theme_class} {{
-        --background-color: var(--background-color-{theme_class});
-        --card-background: var(--card-background-{theme_class});
-        --text-color: var(--text-color-{theme_class});
-    }}
-
-    .stApp {{
-        background: linear-gradient(135deg, var(--background-color), var(--background-color-light));
-        background-size: 400% 400%;
-        animation: gradientAnimation 15s ease infinite;
-        font-family: var(--font-family-body);
-        color: var(--text-color);
-        transition: all 0.3s ease;
-    }}
-
-    @keyframes gradientAnimation {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
-    }}
-
-    /* Header/Title Bar */
-    .main-header {{
-        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        padding: 1.5rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(0, 198, 255, 0.3);
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }}
-
-    .main-header::before {{
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        animation: shimmer 3s infinite;
-    }}
-
-    @keyframes shimmer {{
-        0% {{ left: -100%; }}
-        100% {{ left: 100%; }}
-    }}
-
-    .main-header h1 {{
-        font-family: var(--font-family-heading);
-        color: white;
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        margin: 0;
-        font-size: 3rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-    }}
-
-    .main-header p {{
-        color: rgba(255, 255, 255, 0.9);
-        margin: 0.5rem 0 0 0;
-        font-size: 1.1rem;
-    }}
-
-    /* Sidebar */
-    .stSidebar > div:first-child {{
-        background: linear-gradient(180deg, var(--card-background), var(--background-color));
-        border-right: 3px solid var(--primary-color);
-        box-shadow: 4px 0 20px var(--shadow-color);
-        padding-top: 2rem;
-    }}
-
-    .stSidebar .stButton > button {{
-        width: 100%;
-        border-radius: 10px;
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-        color: white;
-        font-weight: bold;
-        border: none;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 198, 255, 0.3);
-    }}
-
-    .stSidebar .stButton > button:hover {{
-        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4);
-    }}
-
-    /* Chat Messages */
-    .stChatMessage {{
-        background-color: var(--card-background);
-        border-radius: 20px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 20px var(--shadow-color);
-        transition: all 0.3s ease-in-out;
-        border: 2px solid transparent;
-        position: relative;
-        overflow: hidden;
-    }}
-
-    .stChatMessage::before {{
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, var(--border-color), transparent, var(--border-color));
-        z-index: -1;
-        border-radius: 20px;
-    }}
-
-    .stChatMessage[data-testid="user-message"] {{
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
-        border-bottom-right-radius: 5px;
-        margin-left: 20%;
-        transform: translateX(10px);
-    }}
-
-    .stChatMessage[data-testid="assistant-message"] {{
-        background-color: var(--card-background);
-        color: var(--text-color);
-        border-bottom-left-radius: 5px;
-        margin-right: 20%;
-        transform: translateX(-10px);
-    }}
-
-    .stChatMessage:hover {{
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 30px var(--shadow-color);
-    }}
-
-    /* Input area */
-    .stChatInput > div {{
-        background: var(--card-background);
-        border-radius: 25px;
-        border: 3px solid var(--primary-color);
-        box-shadow: 0 4px 20px rgba(0, 198, 255, 0.2);
-        transition: all 0.3s ease;
-    }}
-
-    .stChatInput > div:focus-within {{
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 0.3rem rgba(0, 255, 153, 0.25);
-        transform: scale(1.02);
-    }}
-
-    .stChatInput input {{
-        background: transparent !important;
-        border: none !important;
-        color: var(--text-color) !important;
-        font-size: 1.1rem !important;
-        padding: 1rem 1.5rem !important;
-    }}
-
-    /* Loading animation */
-    .stSpinner > div {{
-        border: 4px solid rgba(0, 198, 255, 0.3);
-        border-top: 4px solid var(--primary-color);
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
-        margin: 2rem auto;
-    }}
-
-    @keyframes spin {{
-        0% {{ transform: rotate(0deg); }}
-        100% {{ transform: rotate(360deg); }}
-    }}
-
-    @keyframes pulse {{
-        0%, 100% {{ transform: scale(1); }}
-        50% {{ transform: scale(1.1); }}
-    }}
-
-    /* Timestamp styling */
-    .timestamp {{
-        font-size: 0.8em;
-        color: rgba(255, 255, 255, 0.7);
-        margin-top: 0.5rem;
-        display: block;
-        font-style: italic;
-    }}
-
-    .stChatMessage[data-testid="assistant-message"] .timestamp {{
-        color: rgba(51, 51, 51, 0.6);
-    }}
-
-    /* Theme toggle button */
-    .theme-toggle {{
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-        border: none;
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        color: white;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 198, 255, 0.3);
-    }}
-
-    .theme-toggle:hover {{
-        transform: scale(1.1) rotate(180deg);
-        box-shadow: 0 6px 20px rgba(0, 198, 255, 0.5);
-    }}
-
-    /* Responsive design */
-    @media (max-width: 768px) {{
-        .main-header h1 {{
-            font-size: 2rem;
-        }}
-        
-        .stChatMessage[data-testid="user-message"] {{
-            margin-left: 10%;
-        }}
-        
-        .stChatMessage[data-testid="assistant-message"] {{
-            margin-right: 10%;
-        }}
-    }}
-
-    /* Info cards */
-    .info-card {{
-        background: linear-gradient(135deg, var(--card-background), rgba(0, 198, 255, 0.1));
-        border-radius: 15px;
-        padding: 1.5rem;
-        margin: 1rem 0;
-        border-left: 5px solid var(--accent-color);
-        box-shadow: 0 4px 15px var(--shadow-color);
-        transition: all 0.3s ease;
-    }}
-
-    .info-card:hover {{
-        transform: translateX(5px);
-        box-shadow: 0 6px 25px var(--shadow-color);
-    }}
-
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {{
-        width: 8px;
-    }}
-
-    ::-webkit-scrollbar-track {{
-        background: var(--background-color);
-    }}
-
-    ::-webkit-scrollbar-thumb {{
-        background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
-        border-radius: 10px;
-    }}
-
-    ::-webkit-scrollbar-thumb:hover {{
-        background: linear-gradient(180deg, var(--secondary-color), var(--accent-color));
-    }}
-
-</style>
+# ---------- CSS + JS ----------
+# CSS for futuristic UI. Light/Dark styles depend on `st.session_state.dark_mode`.
+dark_css = """
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --muted:#9aa6b2;
+  --accent:#00e5a8;
+  --accent2:#5eead4;
+  --bubble-user:#112233;
+  --bubble-assist:#072f3f;
+  --glass: rgba(255,255,255,0.03);
+}
+body { background: linear-gradient(180deg, #071428 0%, #08192a 100%); color: #e6eef6; }
+.header { font-family: 'Inter', sans-serif; }
+.card { background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:16px; padding:14px; box-shadow: 0 6px 30px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.03); }
+.chat-window { max-height:60vh; overflow:auto; padding:12px; border-radius:12px; }
+.msg { padding:12px 16px; margin:8px 0; border-radius:14px; display:inline-block; max-width:78%; font-size:15px; line-height:1.4; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+.msg.user { background: linear-gradient(90deg,#042a2c, #033a66); color:#e6f7ff; border-bottom-right-radius:4px; float:right; text-align:right; }
+.msg.assistant { background: linear-gradient(90deg,#072a3a,#0a5261); color:#e9fff8; border-bottom-left-radius:4px; float:left; text-align:left; }
+.meta { font-size:11px; color:var(--muted); margin-top:6px; }
+.avatar { width:36px; height:36px; border-radius:10px; display:inline-block; vertical-align:middle; margin-right:8px; }
+.row { display:flex; align-items:flex-end; gap:10px; }
+.clearfix::after { content: ''; clear: both; display: table; }
+.footer-input { width:100%; border-radius:12px; padding:12px; font-size:15px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); color:inherit; }
+.send-btn { padding:10px 16px; border-radius:12px; background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#07202a; border:none; font-weight:600; cursor:pointer; box-shadow: 0 8px 20px rgba(0,230,168,0.12); }
+.small { font-size:12px; color:var(--muted); }
+.loader {
+  width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--accent), var(--accent2), transparent); animation:spin 1.2s linear infinite; margin:8px auto;
+}
+@keyframes spin { to { transform: rotate(360deg);} }
+@media (max-width:720px){
+  .chat-window { max-height:50vh; }
+  .msg { font-size:14px; }
+}
 """
 
-st.markdown(get_css_theme(), unsafe_allow_html=True)
+light_css = """
+:root{
+  --bg:#f7fbff;
+  --card:#ffffff;
+  --muted:#556070;
+  --accent:#0ea5b7;
+  --accent2:#06b6d4;
+  --bubble-user:#e6fffb;
+  --bubble-assist:#eef8ff;
+  --glass: rgba(0,0,0,0.03);
+}
+body { background: linear-gradient(180deg, #f8fbff 0%, #eef8ff 100%); color:#06283d; }
+.header { font-family: 'Inter', sans-serif; }
+.card { background: linear-gradient(135deg, rgba(0,0,0,0.02), rgba(255,255,255,0.03)); border-radius:14px; padding:14px; box-shadow: 0 6px 20px rgba(2,10,25,0.04); border: 1px solid rgba(2,10,25,0.03); }
+.chat-window { max-height:60vh; overflow:auto; padding:12px; border-radius:12px; }
+.msg { padding:12px 16px; margin:8px 0; border-radius:14px; display:inline-block; max-width:78%; font-size:15px; line-height:1.4; box-shadow: 0 2px 12px rgba(2,6,23,0.04); }
+.msg.user { background: linear-gradient(90deg,#dffaf6,#c9fbff); color:#06222a; border-bottom-right-radius:4px; float:right; text-align:right; }
+.msg.assistant { background: linear-gradient(90deg,#f0fbff,#e6f7ff); color:#06222a; border-bottom-left-radius:4px; float:left; text-align:left; }
+.meta { font-size:11px; color:var(--muted); margin-top:6px; }
+.avatar { width:36px; height:36px; border-radius:10px; display:inline-block; vertical-align:middle; margin-right:8px; }
+.row { display:flex; align-items:flex-end; gap:10px; }
+.clearfix::after { content: ''; clear: both; display: table; }
+.footer-input { width:100%; border-radius:12px; padding:12px; font-size:15px; background: rgba(0,0,0,0.02); border:1px solid rgba(2,6,23,0.04); color:inherit; }
+.send-btn { padding:10px 16px; border-radius:12px; background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#ffffff; border:none; font-weight:600; cursor:pointer; box-shadow: 0 8px 20px rgba(6,182,212,0.08); }
+.small { font-size:12px; color:var(--muted); }
+.loader {
+  width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--accent), var(--accent2), transparent); animation:spin 1.2s linear infinite; margin:8px auto;
+}
+@keyframes spin { to { transform: rotate(360deg);} }
+@media (max-width:720px){
+  .chat-window { max-height:50vh; }
+  .msg { font-size:14px; }
+}
+"""
 
-# --- App Title Bar with Icon ---
-st.markdown("""
-<div class='main-header'>
-    <h1>💊 Tibb 1.0</h1>
-    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students</p>
-</div>
-""", unsafe_allow_html=True)
+# choose css depending on dark_mode
+css = dark_css if st.session_state.dark_mode else light_css
 
-# Theme toggle button
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    if st.button("🌓 Toggle Theme", key="theme_toggle"):
+# small JS to auto scroll to bottom of chat container and to safely keep focus
+scroll_js = """
+<script>
+function scrollToBottom(){
+  const cw = document.getElementById('chat-window');
+  if(cw) cw.scrollTop = cw.scrollHeight;
+}
+setTimeout(scrollToBottom, 150);
+</script>
+"""
+
+# ---------- Header & Sidebar ----------
+# Create a two-column header: title + small controls
+header_col1, header_col2 = st.columns([4,1])
+with header_col1:
+    st.markdown(
+        f"""
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(90deg,#00e5a8,#5eead4);display:flex;align-items:center;justify-content:center;font-weight:700;color:#07202a;font-size:22px">
+            🩺
+          </div>
+          <div>
+            <div style="font-size:20px;font-weight:700">Tibb 1.0</div>
+            <div style="font-size:12px;color: #9aa6b2">CoMUI MB-2 Pharmacology Assistant</div>
+          </div>
+        </div>
+        """, unsafe_allow_html=True
+    )
+with header_col2:
+    # theme toggle
+    if st.button("Toggle Theme"):
         st.session_state.dark_mode = not st.session_state.dark_mode
-        st.rerun()
+    st.write("")  # small spacer
 
-# --- Sidebar Content ---
+# Sidebar (collapsible)
 with st.sidebar:
-    st.markdown("<h2 style='font-family: var(--font-family-heading); color: var(--primary-color); text-align: center;'>📚 App Information</h2>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='info-card'>
-        <h4>🤖 About Tibb 1.0</h4>
-        <p>Tibb 1.0 is an AI-powered pharmacology assistant designed for CoMUI MB-2 students. 
-        It leverages advanced AI models and a specialized knowledge base to provide accurate 
-        and elaborate answers to your pharmacology questions.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<h2 style='font-family: var(--font-family-heading); color: var(--primary-color); text-align: center;'>📋 Instructions</h2>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='info-card'>
-        <h4>🚀 How to Use</h4>
-        <ol>
-            <li>Type your pharmacology question in the input box below</li>
-            <li>Press Enter or click the send button</li>
-            <li>Tibb 1.0 will provide a detailed response based on its knowledge base</li>
-            <li>Use the 'Clear Chat' button to reset the conversation</li>
-        </ol>
-    </div>
-    """, unsafe_allow_html=True)
-
+    st.markdown("## About Tibb 1.0")
+    st.markdown("Futuristic UI, backed by your ComUI MB-2 slides. Ask Pharmacology MB-2 questions and get evidence-based replies.")
     st.markdown("---")
-    
-    # Enhanced clear button
-    if st.button("🗑️ Clear Chat History", key="clear_chat_button", help="Reset the conversation"):
+    st.markdown("### How to use\n1. Type a clear question in the box below.\n2. Press **Send** or hit Enter.\n3. Use **Reset chat** to clear conversation.")
+    st.markdown("---")
+    if st.button("Reset chat"):
         st.session_state.chat_history = [
-            {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
+            {"role":"assistant", "content":"Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "ts": datetime.now().isoformat()}
         ]
-        st.success("Chat history cleared!")
-        st.rerun()
-
+        st.experimental_rerun()
     st.markdown("---")
-    
-    # App stats
-    st.markdown("""
-    <div class='info-card'>
-        <h4>📊 Session Stats</h4>
-        <p><strong>Messages:</strong> {}</p>
-        <p><strong>Theme:</strong> {}</p>
-        <p><strong>Status:</strong> 🟢 Online</p>
-    </div>
-    """.format(
-        len(st.session_state.get('chat_history', [])),
-        "Dark" if st.session_state.get('dark_mode', False) else "Light"
-    ), unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.markdown("<p style='text-align: center; font-size: 0.8em; color: var(--text-color); font-style: italic;'>⚡ Powered by Gemini 2.0 Flash & Pinecone</p>", unsafe_allow_html=True)
+    st.markdown("Made for medical students • Keep questions clinical and professional.")
 
+# Inject CSS (unsafe HTML)
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
-# Initialize chat history in session state
-from datetime import datetime
+# ---------- Main chat card ----------
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = [
-        {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
-    ]
+# Chat window container (id used by JS to scroll)
+st.markdown('<div id="chat-window" class="chat-window">', unsafe_allow_html=True)
 
-# Main chat container
-st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+# Render chat history (custom bubbles)
+def render_chat():
+    # ensure older entries without timestamp display properly
+    for i, msg in enumerate(st.session_state.chat_history):
+        role = msg.get("role", "assistant")
+        content = msg.get("content", "")
+        ts = msg.get("ts")
+        if not ts:
+            ts = datetime.now().isoformat()
+            st.session_state.chat_history[i]["ts"] = ts
+        timestr = datetime.fromisoformat(ts).strftime("%b %d, %H:%M")
+        # avatar / name
+        if role == "user":
+            avatar_html = '<div class="avatar" style="background:linear-gradient(90deg,#042a2c,#033a66);display:flex;align-items:center;justify-content:center;color:white">U</div>'
+            msg_html = f"""
+            <div class="row clearfix" style="justify-content:flex-end;">
+              <div style="max-width:86%;text-align:right;">
+                <div class="msg user">{content}</div>
+                <div class="meta" style="text-align:right">{timestr}</div>
+              </div>
+              {avatar_html}
+            </div>
+            """
+        else:
+            avatar_html = '<div class="avatar" style="background:linear-gradient(90deg,#072a3a,#0a5261);display:flex;align-items:center;justify-content:center;color:white">A</div>'
+            msg_html = f"""
+            <div class="row clearfix" style="justify-content:flex-start;">
+              {avatar_html}
+              <div style="max-width:86%;text-align:left;">
+                <div class="msg assistant">{content}</div>
+                <div class="meta">{timestr}</div>
+              </div>
+            </div>
+            """
+        st.markdown(msg_html, unsafe_allow_html=True)
 
-# Display chat history with enhanced styling
-for i, message in enumerate(st.session_state.chat_history):
-    with st.chat_message(message["role"]):
-        # Add message content with timestamp
-        content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {message['timestamp']}</span>"
-        st.markdown(content_with_timestamp, unsafe_allow_html=True)
+render_chat()
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)  # close chat-window container
 
-# Enhanced input area
-st.markdown("<div class='input-container'>", unsafe_allow_html=True)
+# Footer input area: use a form so Enter can submit
+with st.form(key="input_form", clear_on_submit=False):
+    user_text = st.text_area("Ask your Pharmacology question(s):", height=80, key="user_input", placeholder="E.g., 'Explain mechanism of action and side effects of aminoglycosides.'")
+    col1, col2, col3 = st.columns([1,1,2])
+    with col1:
+        send = st.form_submit_button("Send", help="Send question to assistant")
+    with col2:
+        # keep a soft 'reset input' button (doesn't reset history)
+        if st.form_submit_button("Clear input"):
+            st.session_state.user_input = ""
+    with col3:
+        st.write("")  # spacer
 
-# Handle user input with enhanced UX
-user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
+# If user pressed Send in the form
+if send and user_text and not st.session_state.sending:
+    # append user message with timestamp
+    st.session_state.chat_history.append({"role":"user", "content": user_text, "ts": datetime.now().isoformat()})
+    st.session_state.sending = True
 
-if user_input:
-    # Add user message with timestamp
-    current_time = datetime.now().strftime("%H:%M:%S")
-    
-    with st.chat_message("user"):
-        user_content = f"{user_input}\n\n<span class='timestamp'>⏰ {current_time}</span>"
-        st.markdown(user_content, unsafe_allow_html=True)
-    
-    st.session_state.chat_history.append({
-        "role": "user", 
-        "content": user_input, 
-        "timestamp": current_time
-    })
-    
-    # Show enhanced loading animation with custom message
-    with st.spinner("🧠 Activating Neural Pathways... 🔬 Analyzing Pharmacology Data... ⚡ Generating Response..."):
-        response = generate_response(user_input)
-    
-    # Add assistant message with timestamp
-    response_time = datetime.now().strftime("%H:%M:%S")
-    
-    with st.chat_message("assistant"):
-        assistant_content = f"{response}\n\n<span class='timestamp'>⏰ {response_time}</span>"
-        st.markdown(assistant_content, unsafe_allow_html=True)
-    
-    st.session_state.chat_history.append({
-        "role": "assistant", 
-        "content": response, 
-        "timestamp": response_time
-    })
+    # Show futuristic loader while computing — use custom CSS loader
+    placeholder = st.empty()
+    with placeholder.container():
+        st.markdown('<div class="card" style="text-align:center;padding:16px"><div class="loader"></div><div class="small">Deep Reasoning Activated…</div></div>', unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+    # call your unchanged backend
+    try:
+        response = generate_response(user_text)
+    except Exception as e:
+        response = "⚠️ Error generating response. See logs. " + str(e)
 
-# Add some spacing at the bottom for better UX
-st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
+    # remove loader
+    placeholder.empty()
 
-# Footer with additional info
-st.markdown("""
-<div style='text-align: center; padding: 2rem; margin-top: 3rem; border-top: 2px solid var(--primary-color); background: linear-gradient(135deg, var(--card-background), rgba(0, 198, 255, 0.05));'>
-    <h4 style='color: var(--primary-color); font-family: var(--font-family-heading);'>🎓 Tibb 1.0 - Your AI Pharmacology Companion</h4>
-    <p style='color: var(--text-color); margin: 0.5rem 0;'>Empowering CoMUI MB-2 students with AI-driven pharmacology insights</p>
-    <p style='font-size: 0.9em; color: var(--text-color); opacity: 0.8;'>Built with ❤️ using Streamlit, Gemini 2.0 Flash, and Pinecone</p>
-</div>
-""", unsafe_allow_html=True)
+    # append assistant response
+    st.session_state.chat_history.append({"role":"assistant", "content": response, "ts": datetime.now().isoformat()})
+    st.session_state.sending = False
 
+    # re-render chat to include latest messages
+    st.experimental_rerun()
 
+# If not sending, still show hint under input
+if not st.session_state.sending:
+    st.markdown('<div class="small" style="margin-top:8px">Tip: Be specific; include drug names, doses or scenarios for better answers.</div>', unsafe_allow_html=True)
+
+# Insert scroll JS to push view to bottom of chat
+st.markdown(scroll_js, unsafe_allow_html=True)
+
+# close main card
+st.markdown('</div>', unsafe_allow_html=True)
