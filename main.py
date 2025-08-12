@@ -102,7 +102,7 @@ def generate_response(question):
     # Initialize Gemini 2.0 Flash model with explicit client
     chat = ChatGoogleGenerativeAI(
         model="gemini-2.0-flash",
-        temperature=0.17,
+        temperature=0.2,
         google_api_key=GOOGLE_API_KEY
     )
     
@@ -135,7 +135,7 @@ for message in st.session_state.chat_history:
         st.markdown(message["content"])
 
 # Handle user input
-user_input = st.chat_input("Ask your Pharmacology questionS and let's see how i can help:")
+user_input = st.chat_input("Ask your Pharmacology questions and let's see how i can help:")
 if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
