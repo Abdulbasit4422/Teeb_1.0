@@ -469,11 +469,11 @@ def get_css_theme():
 st.markdown(get_css_theme(), unsafe_allow_html=True)
 
 # Theme toggle button
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    if st.button("🌓 Toggle Theme", key="theme_toggle"):
-        st.session_state.dark_mode = not st.session_state.dark_mode
-        st.rerun()
+#col1, col2, col3 = st.columns([1, 1, 1])
+#with col2:
+    #if st.button("🌓 Toggle Theme", key="theme_toggle"):
+        #st.session_state.dark_mode = not st.session_state.dark_mode
+        #st.rerun()
 
 # --- Sidebar Content ---
 with st.sidebar:
