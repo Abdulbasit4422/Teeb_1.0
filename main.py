@@ -525,10 +525,10 @@ with st.sidebar:
 # Initialize chat history in session state
 from datetime import datetime
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = [
-        {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
-    ]
+#if "chat_history" not in st.session_state:
+    #st.session_state.chat_history = [
+       # {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
+   # ]
 
 # Main chat container
 #st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
