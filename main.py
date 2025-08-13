@@ -119,6 +119,23 @@ def generate_response(question):
     
     return res.get('text', '')
 
+# --- App Title Bar with Icon ---
+st.markdown("""
+<div class='main-header'>
+    <h1>Tibb 1.0 💊 </h1>
+    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
+
+# Page configuration
+st.set_page_config(
+    page_title="Tibb 1.0 - AI Pharmacology Assistant",
+    page_icon="💊",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 # Streamlit app layout remains unchanged
 #st.title("Tibb 1.0")
 #st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
@@ -150,24 +167,6 @@ if user_input:
 
 
 # --- UI/UX Enhancements ---
-
-# --- App Title Bar with Icon ---
-st.markdown("""
-<div class='main-header'>
-    <h1>Tibb 1.0 💊 </h1>
-    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
-
-# Page configuration
-st.set_page_config(
-    page_title="Tibb 1.0 - AI Pharmacology Assistant",
-    page_icon="💊",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
 
 
 # Initialize theme state
