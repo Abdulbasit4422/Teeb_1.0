@@ -520,6 +520,15 @@ from datetime import datetime
 
 
 
+# Main chat container
+#st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+
+# Display chat history with enhanced styling
+#for i, message in enumerate(st.session_state.chat_history):
+    #with st.chat_message(message["role"]):
+        # Add message content with timestamp
+        #content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {message['timestamp']}</span>"
+        #st.markdown(content_with_timestamp, unsafe_allow_html=True)
 timestamp = message.get("timestamp", "")  # fallback to empty string if missing
 if timestamp:
     content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {timestamp}</span>"
