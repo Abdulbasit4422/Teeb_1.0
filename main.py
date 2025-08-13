@@ -152,7 +152,7 @@ for message in st.session_state.chat_history:
         st.markdown(message["content"])
 
 # Handle user input
-user_input = st.chat_input("Ask your Pharmacology questions and let's see how i can help:")
+user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
@@ -555,7 +555,7 @@ st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 # Handle user input with enhanced UX
 user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 
-if user_input:
+'''if user_input:
     # Add user message with timestamp
     current_time = datetime.now().strftime("%H:%M:%S")
     
@@ -567,7 +567,7 @@ if user_input:
         "role": "user", 
         "content": user_input, 
         "timestamp": current_time
-    })
+    })'''
     
     # Show enhanced loading animation with custom message
     #with st.spinner("🧠 Activating Neural Pathways... 🔬 Analyzing Pharmacology Data... ⚡ Generating Response..."):
