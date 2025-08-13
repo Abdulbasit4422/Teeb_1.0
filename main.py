@@ -468,6 +468,13 @@ def get_css_theme():
 
 st.markdown(get_css_theme(), unsafe_allow_html=True)
 
+# Theme toggle button
+#col1, col2, col3 = st.columns([1, 1, 1])
+#with col2:
+    #if st.button("🌓 Toggle Theme", key="theme_toggle"):
+        #st.session_state.dark_mode = not st.session_state.dark_mode
+        #st.rerun()
+
 # --- Sidebar Content ---
 with st.sidebar:
     st.markdown("<h2 style='font-family: var(--font-family-heading); color: var(--primary-color); text-align: center;'>📚 App Information</h2>", unsafe_allow_html=True)
@@ -518,7 +525,10 @@ with st.sidebar:
 # Initialize chat history in session state
 from datetime import datetime
 
-
+#if "chat_history" not in st.session_state:
+    #st.session_state.chat_history = [
+       # {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
+   # ]
 
 # Main chat container
 #st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
