@@ -120,8 +120,8 @@ def generate_response(question):
     return res.get('text', '')
 
 # Streamlit app layout remains unchanged
-st.title("Tibb 1.0")
-st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
+#st.title("Tibb 1.0")
+#st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
 
 # Initialize chat history in session state
 if "chat_history" not in st.session_state:
@@ -462,9 +462,11 @@ st.markdown(get_css_theme(), unsafe_allow_html=True)
 st.markdown("""
 <div class='main-header'>
     <h1>Tibb 1.0 💊 </h1>
-    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students</p>
+    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
 </div>
 """, unsafe_allow_html=True)
+
+st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
 
 # Theme toggle button
 col1, col2, col3 = st.columns([1, 1, 1])
