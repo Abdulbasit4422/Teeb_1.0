@@ -525,20 +525,6 @@ with st.sidebar:
 # Initialize chat history in session state
 from datetime import datetime
 
-#if "chat_history" not in st.session_state:
-    #st.session_state.chat_history = [
-       # {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
-   # ]
-
-# Main chat container
-#st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-
-# Display chat history with enhanced styling
-#for i, message in enumerate(st.session_state.chat_history):
-    #with st.chat_message(message["role"]):
-        # Add message content with timestamp
-        #content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {message['timestamp']}</span>"
-        #st.markdown(content_with_timestamp, unsafe_allow_html=True)
 timestamp = message.get("timestamp", "")  # fallback to empty string if missing
 if timestamp:
     content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {timestamp}</span>"
