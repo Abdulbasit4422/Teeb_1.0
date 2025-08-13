@@ -553,9 +553,9 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 
 # Handle user input with enhanced UX
-user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
+##user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 
-'''if user_input:
+if user_input:
     # Add user message with timestamp
     current_time = datetime.now().strftime("%H:%M:%S")
     
@@ -567,7 +567,7 @@ user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see h
         "role": "user", 
         "content": user_input, 
         "timestamp": current_time
-    })'''
+    })
     
     # Show enhanced loading animation with custom message
     #with st.spinner("🧠 Activating Neural Pathways... 🔬 Analyzing Pharmacology Data... ⚡ Generating Response..."):
