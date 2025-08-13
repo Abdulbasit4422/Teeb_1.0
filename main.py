@@ -552,15 +552,11 @@ st.markdown("</div>", unsafe_allow_html=True)
 # Enhanced input area
 st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 
-# Handle user input with enhanced UX
-##user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
-
     
     # Add assistant message with timestamp
 response = None  # Prevent NameError
 
-# If you're ready to re-enable:
-# response = generate_response(user_input)
+
 
    
 if response:
