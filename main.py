@@ -525,10 +525,7 @@ with st.sidebar:
 # Initialize chat history in session state
 from datetime import datetime
 
-#if "chat_history" not in st.session_state:
-    #st.session_state.chat_history = [
-       # {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?", "timestamp": datetime.now().strftime("%H:%M:%S")}
-   # ]
+
 
 # Main chat container
 #st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -555,23 +552,6 @@ st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 # Handle user input with enhanced UX
 ##user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 
-'''if user_input:
-    # Add user message with timestamp
-    current_time = datetime.now().strftime("%H:%M:%S")
-    
-    with st.chat_message("user"):
-        user_content = f"{user_input}\n\n<span class='timestamp'>⏰ {current_time}</span>"
-        st.markdown(user_content, unsafe_allow_html=True)
-    
-    st.session_state.chat_history.append({
-        "role": "user", 
-        "content": user_input, 
-        "timestamp": current_time
-    })
-    
-    # Show enhanced loading animation with custom message
-    #with st.spinner("🧠 Activating Neural Pathways... 🔬 Analyzing Pharmacology Data... ⚡ Generating Response..."):
-        #response = generate_response(user_input)'''
     
     # Add assistant message with timestamp
 response = None  # Prevent NameError
