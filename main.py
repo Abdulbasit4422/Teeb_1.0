@@ -151,14 +151,6 @@ if user_input:
 
 # --- UI/UX Enhancements ---
 
-# Page configuration
-st.set_page_config(
-    page_title="Tibb 1.0 - AI Pharmacology Assistant",
-    page_icon="💊",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
-
 # --- App Title Bar with Icon ---
 st.markdown("""
 <div class='main-header'>
@@ -168,6 +160,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
+
+# Page configuration
+st.set_page_config(
+    page_title="Tibb 1.0 - AI Pharmacology Assistant",
+    page_icon="💊",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
 
 # Initialize theme state
 if "dark_mode" not in st.session_state:
