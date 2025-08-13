@@ -159,6 +159,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# --- App Title Bar with Icon ---
+st.markdown("""
+<div class='main-header'>
+    <h1>Tibb 1.0 💊 </h1>
+    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
+
 # Initialize theme state
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
@@ -457,16 +467,6 @@ def get_css_theme():
 """
 
 st.markdown(get_css_theme(), unsafe_allow_html=True)
-
-# --- App Title Bar with Icon ---
-st.markdown("""
-<div class='main-header'>
-    <h1>Tibb 1.0 💊 </h1>
-    <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
 
 # Theme toggle button
 col1, col2, col3 = st.columns([1, 1, 1])
