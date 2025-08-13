@@ -574,6 +574,12 @@ st.markdown("<div class='input-container'>", unsafe_allow_html=True)
         #response = generate_response(user_input)'''
     
     # Add assistant message with timestamp
+response = None  # Prevent NameError
+
+# If you're ready to re-enable:
+# response = generate_response(user_input)
+
+   
 if response:
     response_time = datetime.now().strftime("%H:%M:%S")
     
