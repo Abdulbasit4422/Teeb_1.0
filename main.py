@@ -468,13 +468,6 @@ def get_css_theme():
 
 st.markdown(get_css_theme(), unsafe_allow_html=True)
 
-# Theme toggle button
-#col1, col2, col3 = st.columns([1, 1, 1])
-#with col2:
-    #if st.button("🌓 Toggle Theme", key="theme_toggle"):
-        #st.session_state.dark_mode = not st.session_state.dark_mode
-        #st.rerun()
-
 # --- Sidebar Content ---
 with st.sidebar:
     st.markdown("<h2 style='font-family: var(--font-family-heading); color: var(--primary-color); text-align: center;'>📚 App Information</h2>", unsafe_allow_html=True)
@@ -527,15 +520,6 @@ from datetime import datetime
 
 
 
-# Main chat container
-#st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-
-# Display chat history with enhanced styling
-#for i, message in enumerate(st.session_state.chat_history):
-    #with st.chat_message(message["role"]):
-        # Add message content with timestamp
-        #content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {message['timestamp']}</span>"
-        #st.markdown(content_with_timestamp, unsafe_allow_html=True)
 timestamp = message.get("timestamp", "")  # fallback to empty string if missing
 if timestamp:
     content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {timestamp}</span>"
@@ -548,9 +532,6 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # Enhanced input area
 st.markdown("<div class='input-container'>", unsafe_allow_html=True)
-
-# Handle user input with enhanced UX
-##user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 
     
     # Add assistant message with timestamp
