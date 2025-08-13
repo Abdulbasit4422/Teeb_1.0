@@ -555,7 +555,7 @@ st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 # Handle user input with enhanced UX
 ##user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 
-if user_input:
+'''if user_input:
     # Add user message with timestamp
     current_time = datetime.now().strftime("%H:%M:%S")
     
@@ -571,9 +571,10 @@ if user_input:
     
     # Show enhanced loading animation with custom message
     #with st.spinner("🧠 Activating Neural Pathways... 🔬 Analyzing Pharmacology Data... ⚡ Generating Response..."):
-        #response = generate_response(user_input)
+        #response = generate_response(user_input)'''
     
     # Add assistant message with timestamp
+if response:
     response_time = datetime.now().strftime("%H:%M:%S")
     
     with st.chat_message("assistant"):
