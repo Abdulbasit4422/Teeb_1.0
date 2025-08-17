@@ -3,12 +3,14 @@ import asyncio
 import nest_asyncio
 import streamlit as st
 from dotenv import load_dotenv
+from datetime import datetime
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import LLMChain
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone
+
 
 # Apply nest_asyncio patch
 nest_asyncio.apply()
