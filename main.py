@@ -42,7 +42,7 @@ Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing i
 
 {doc_content}
 
-Provide very brief accurate and helpful health response based on the provided information and your expertise.
+Provide very extensively elaborate accurate and helpful responses based on the provided information and your expertise.
 """
 
 
