@@ -4,6 +4,7 @@ import nest_asyncio
 import streamlit as st
 from dotenv import load_dotenv
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import LLMChain
@@ -44,12 +45,13 @@ Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing i
 Provide very brief accurate and helpful health response based on the provided information and your expertise.
 """
 
+
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         {
             "role": "assistant",
             "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?",
-            "timestamp": datetime.now().strftime("%H:%M:%S")
+            "timestamp": datetime.now(ZoneInfo("Africa/Lagos")).strftime("%H:%M:%S")
         }
     ]
 
@@ -165,13 +167,14 @@ st.set_page_config(
 # Initialize chat history in session state
 
 # Handle user input
+
 render_chat_history()
 
 user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 if user_input:
-     # append user message (single source of truth)
-    user_ts = datetime.now().strftime("%H:%M:%S")
-    st.session_state.chat_history.append({"role":"user","content":user_input,"timestamp":user_ts})
+    # append user message (single source of truth)
+    user_ts = datetime.now(ZoneInfo("Africa/Lagos")).strftime("%H:%M:%S")
+    st.session_state.chat_history.append({"role": "user", "content": user_input, "timestamp": user_ts})
 
     # immediate render of the user's message in UI
     with st.chat_message("user"):
@@ -181,8 +184,8 @@ if user_input:
     with st.spinner("Deep Reasoning Activated..."):
         assistant_text = generate_response(user_input)
 
-    assistant_ts = datetime.now().strftime("%H:%M:%S")
-    st.session_state.chat_history.append({"role":"assistant","content":assistant_text,"timestamp":assistant_ts})
+    assistant_ts = datetime.now(ZoneInfo("Africa/Lagos")).strftime("%H:%M:%S")
+    st.session_state.chat_history.append({"role": "assistant", "content": assistant_text, "timestamp": assistant_ts})
 
     with st.chat_message("assistant"):
         st.markdown(f"{assistant_text}\n\n<span class='timestamp'>⏰ {assistant_ts}</span>", unsafe_allow_html=True)
