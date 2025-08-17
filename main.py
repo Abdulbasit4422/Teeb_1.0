@@ -42,11 +42,30 @@ Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing i
 Provide very brief accurate and helpful health response based on the provided information and your expertise.
 """
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+        {
+            "role": "assistant",
+            "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?",
+            "timestamp": datetime.now().strftime("%H:%M:%S")
+        }
+    ]
+
+def render_chat_history():
+    """Render the chat history in chronological order (single place)."""
+    for msg in st.session_state.chat_history:
+        role = msg.get("role", "assistant")
+        content = msg.get("content", "")
+        ts = msg.get("timestamp")
+        if ts:
+            content = f"{content}\n\n<span class='timestamp'>⏰ {ts}</span>"
+        with st.chat_message(role):
+            st.markdown(content, unsafe_allow_html=True)
+            
+
 def generate_response(question):
     """Generate a response using Pinecone retrieval and Gemini 2.0 Flash."""
-    # Create event loop for current thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+
     
     # Embed the user's question
     query_embed = embed_model.embed_query(question)
@@ -115,9 +134,10 @@ def generate_response(question):
     )
     
     # Generate the response
-    res = conversation({"question": question})
-    
-    return res.get('text', '')
+    res = conversation({"question": question})  # synchronous call
+    # safe extraction — adapt if your wrapper uses a different key
+    text = res.get("text") or res.get("output") or res.get("answer") or str(res)
+    return text
 
 # --- App Title Bar with Icon ---
 st.markdown("""
@@ -141,29 +161,29 @@ st.set_page_config(
 #st.write("Ask your Pharmacology MB-2 questions and receive response based on our knowledge base of your ComUI MB-2 slides.")
 
 # Initialize chat history in session state
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = [
-        {"role": "assistant", "content": "Hello Impeccabillem Warrior, I'm your CoMUI Pharmacology MB2 Assistant. How can I assist you today?"}
-    ]
-
-# Display chat history
-for message in st.session_state.chat_history:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
 
 # Handle user input
+render_chat_history()
+
 user_input = st.chat_input("💬 Ask your Pharmacology questions and let's see how I can help...")
 if user_input:
+     # append user message (single source of truth)
+    user_ts = datetime.now().strftime("%H:%M:%S")
+    st.session_state.chat_history.append({"role":"user","content":user_input,"timestamp":user_ts})
+
+    # immediate render of the user's message in UI
     with st.chat_message("user"):
-        st.markdown(user_input)
-    st.session_state.chat_history.append({"role": "user", "content": user_input})
-    
+        st.markdown(f"{user_input}\n\n<span class='timestamp'>⏰ {user_ts}</span>", unsafe_allow_html=True)
+
+    # generate assistant response
     with st.spinner("Deep Reasoning Activated..."):
-        response = generate_response(user_input)
-    
+        assistant_text = generate_response(user_input)
+
+    assistant_ts = datetime.now().strftime("%H:%M:%S")
+    st.session_state.chat_history.append({"role":"assistant","content":assistant_text,"timestamp":assistant_ts})
+
     with st.chat_message("assistant"):
-        st.markdown(response)
-    st.session_state.chat_history.append({"role": "assistant", "content": response})
+        st.markdown(f"{assistant_text}\n\n<span class='timestamp'>⏰ {assistant_ts}</span>", unsafe_allow_html=True)
 
 
 # --- UI/UX Enhancements ---
@@ -523,40 +543,12 @@ with st.sidebar:
 
 
 # Initialize chat history in session state
-from datetime import datetime
-
-timestamp = message.get("timestamp", "")  # fallback to empty string if missing
-if timestamp:
-    content_with_timestamp = f"{message['content']}\n\n<span class='timestamp'>⏰ {timestamp}</span>"
-else:
-    content_with_timestamp = message['content']
-
-st.markdown(content_with_timestamp, unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 # Enhanced input area
 st.markdown("<div class='input-container'>", unsafe_allow_html=True)
 
-    
-    # Add assistant message with timestamp
-response = None  # Prevent NameError
 
 
-
-   
-if response:
-    response_time = datetime.now().strftime("%H:%M:%S")
-    
-    with st.chat_message("assistant"):
-        assistant_content = f"{response}\n\n<span class='timestamp'>⏰ {response_time}</span>"
-        st.markdown(assistant_content, unsafe_allow_html=True)
-    
-    st.session_state.chat_history.append({
-        "role": "assistant", 
-        "content": response, 
-        "timestamp": response_time
-    })
 
 st.markdown("</div>", unsafe_allow_html=True)
 
