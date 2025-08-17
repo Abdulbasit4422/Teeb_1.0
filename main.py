@@ -146,7 +146,7 @@ def generate_response(question):
 # --- App Title Bar with Icon ---
 st.markdown("""
 <div class='main-header'>
-    <h1>Tibb 1.0 💊 </h1>
+    <h1>Tibb 2.0 💊 </h1>
     <p>AI-Powered Pharmacology Assistant for CoMUI MB-2 Students </p>
 </div>
 """, unsafe_allow_html=True)
@@ -155,7 +155,7 @@ st.write("Ask your Pharmacology MB-2 questions and receive response based on our
 
 # Page configuration
 st.set_page_config(
-    page_title="Tibb 1.0 - AI Pharmacology Assistant",
+    page_title="Tibb 2.0 - AI Pharmacology Assistant",
     page_icon="💊",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -506,8 +506,8 @@ with st.sidebar:
     
     st.markdown("""
     <div class='info-card'>
-        <h4>🤖 About Tibb 1.0</h4>
-        <p>Tibb 1.0 is an AI-powered pharmacology assistant designed for CoMUI MB-2 students. 
+        <h4>🤖 About Tibb 2.0</h4>
+        <p>Tibb 2.0 is an AI-powered pharmacology assistant designed for CoMUI MB-2 students. 
         It leverages advanced AI models and acomprehensive ComUI Materials knowledge base to provide accurate 
         and elaborate answers to your pharmacology questions.</p>
     </div>
@@ -521,7 +521,7 @@ with st.sidebar:
         <ol>
             <li>Type your pharmacology question in the input box below</li>
             <li>Press Enter or click the send button</li>
-            <li>Tibb 1.0 will provide a detailed response based on its knowledge base</li>
+            <li>Tibb 2.0 will provide a detailed response based on its knowledge base</li>
             <li>Use the 'Clear Chat' button to reset the conversation</li>
         </ol>
     </div>
@@ -563,7 +563,7 @@ st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
 # Footer with additional info
 st.markdown("""
 <div style='text-align: center; padding: 2rem; margin-top: 3rem; border-top: 2px solid var(--primary-color); background: linear-gradient(135deg, var(--card-background), rgba(0, 198, 255, 0.05));'>
-    <h4 style='color: var(--primary-color); font-family: var(--font-family-heading);'>🎓 Tibb 1.0 - Your AI Pharmacology Companion</h4>
+    <h4 style='color: var(--primary-color); font-family: var(--font-family-heading);'>🎓 Tibb 2.0 - Your AI Pharmacology Companion</h4>
     <p style='color: var(--text-color); margin: 0.5rem 0;'>Empowering ComUI MB-2 students with AI-driven pharmacology insights</p>
     <p style='font-size: 0.9em; color: var(--text-color); opacity: 0.8;'> Built ❤️ using RAG, Gemini 2.0 Flash. </p>
 </div>
