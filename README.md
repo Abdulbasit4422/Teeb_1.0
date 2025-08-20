@@ -1,10 +1,10 @@
-# HIV Health Guidance Chatbot With RAG
+# MB-2 Pharmacology Preparation Chatbot With RAG
 
-Welcome to the HIV Health Guidance Chatbot project! 🎉 This practicum is designed to demonstrate how to build a helpful chatbot using Large Language Models (LLMs), vector databases, and Streamlit for the user interface.
+Welcome to the MB-2 Pharmacology Preparation Chatbot project! 🎉 This practicum is designed to demonstrate how to build a helpful chatbot using Large Language Models (LLMs), vector databases, and Streamlit for the user interface.
 
 This README will guide you step-by-step from setting up the project to understanding its core components. Whether you're new to Python, LLMs, or even coding, we aim to make this journey smooth and educational!
 
-**GitHub Repository:** [https://github.com/Ajisco/DSA_HIV](https://github.com/Ajisco/DSA_HIV)
+**GitHub Repository:** [https://github.com/Abdulbasit4422](https://github.com/Abdulbasit4422)
 
 ---
 
@@ -36,13 +36,13 @@ This README will guide you step-by-step from setting up the project to understan
 
 ## About The Project
 
-This project is an **HIV Health Guidance Chatbot**. Its main goal is to answer user questions about HIV accurately and briefly. It uses information from a medical document (in this case, `WHO_HIV.pdf`) to provide context-aware responses.
+This project is an **MB-2 Pharmacology Preparation Chatbot**. Its main goal is to answer user questions about on MB-2 Pharmacology  accurately and briefly. It uses information from a medical document (in this case, `Pharmacology_MB_2.pdf`) to provide context-aware responses.
 
 Imagine you have a lot of information in a PDF document, and you want an easy way for people to ask questions and get answers directly from that document. This project shows you how to build such a system!
 
 The chatbot:
 1.  Takes a user's question.
-2.  Searches a specialized database (Pinecone) for relevant information from the `WHO_HIV.pdf` document.
+2.  Searches a specialized database (Pinecone) for relevant information from the `Pharmacology_MB_2.pdf` document.
 3.  Uses a powerful AI model (Google's Gemini 2.0 Flash) to understand the question and the retrieved information.
 4.  Generates a concise and helpful answer.
 
@@ -171,17 +171,17 @@ This project requires API keys for Google (Gemini AI) and Pinecone. These keys a
 ## 🏃‍♀️ Running the Project
 
 The project has two main Python scripts:
-1.  `pinecone_vector.py`: This script processes your PDF document (`WHO_HIV.pdf`), converts its content into "embeddings" (numerical representations), and stores them in your Pinecone vector database. **You only need to run this once** (or whenever your PDF document changes).
-2.  `main.py`: This script runs the Streamlit web application, allowing you to chat with the HIV Health Guidance Assistant.
+1.  `pinecone_vector.py`: This script processes your PDF document (`Pharmacology_MB_2.pdf`), converts its content into "embeddings" (numerical representations), and stores them in your Pinecone vector database. **You only need to run this once** (or whenever your PDF document changes).
+2.  `main.py`: This script runs the Streamlit web application, allowing you to chat with the MB-2 Pharmacology Chatbot Assistant.
 
 ### Step 1: Prepare Your Knowledge Base (PDF)
 
-1.  **Download or place your PDF file** into the root directory of the project. The current script `pinecone_vector.py` is set to look for a file named `WHO_HIV.pdf`.
+1.  **Download or place your PDF file** into the root directory of the project. The current script `pinecone_vector.py` is set to look for a file named `Pharmacology_MB_2.pdf`.
     * If your PDF has a different name, you'll need to update this line in `pinecone_vector.py`:
         ```python
-        pdf_file_path = 'WHO_HIV.pdf' # name of pdf
+        pdf_file_path = 'Pharmacology_MB_2.pdf' # name of pdf
         ```
-    * For this practicum, ensure you have a `WHO_HIV.pdf` file in the main `DSA_HIV` folder. You can find suitable WHO HIV documents online or use one provided for the practicum.
+    * For this practicum, ensure you have a `Pharmacology_MB_2.pdf` file in the main `DSA_HIV` folder. You can find suitable WHO HIV documents online or use one provided for the practicum.
 
 ### Step 2: Populate the Vector Database (`pinecone_vector.py`)
 
@@ -194,7 +194,7 @@ This script will read your PDF, break it into smaller chunks, generate embedding
     python pinecone_vector.py
     ```
     * **What to Expect:**
-        * The script will first check if a Pinecone index named `hiv` exists. If not, it will create one (this might take about 60 seconds).
+        * The script will first check if a Pinecone index named `pharm` exists. If not, it will create one (this might take about 60 seconds).
         * You'll see progress bars as it loads the PDF, splits the documents, embeds the text chunks, and upserts (uploads) them to Pinecone.
         * This process can take some time, especially for large PDFs or if you have a slower internet connection, as it involves making many API calls.
         * You should see messages like "Embedding batches" and "Upserting batches" with progress bars.
@@ -365,7 +365,7 @@ print("\nPinecone vector storage complete!\n")
 1.  **Load Configuration:** Reads API keys from `.env`.
 2.  **Initialize Models & Pinecone:** Sets up the Google embedding model and connects to your Pinecone account.
 3.  **Create Pinecone Index:** If an index named `hiv` doesn't exist, it creates one. This index will store our document vectors.
-4.  **Load PDF:** Uses `PyPDFLoader` to read the content from `WHO_HIV.pdf`.
+4.  **Load PDF:** Uses `PyPDFLoader` to read the content from `Pharmacology_MB_2.pdf`.
 5.  **Split Documents:** Breaks the loaded PDF content into smaller chunks using `RecursiveCharacterTextSplitter`. This is important because LLMs have limits on how much text they can process at once, and smaller chunks are better for precise information retrieval.
 6.  **Generate Embeddings:** For each text chunk, it uses `GoogleGenerativeAIEmbeddings` to create a numerical vector (embedding). These embeddings capture the semantic meaning of the text. This step is done concurrently (in parallel) to speed it up.
 7.  **Upsert to Pinecone:** The script uploads these embeddings (along with their original text as metadata) to the `hiv` Pinecone index in batches. Pinecone is optimized for fast similarity searches on these vectors.
@@ -548,7 +548,7 @@ if user_input: # If the user typed something and pressed Enter
 1.  **Load Configuration & Initialize:** Loads API keys, initializes Pinecone and the Google embedding model.
 2.  **`generate_response(question)` Function:** This is the heart of the chatbot logic.
       * **Embed Question:** The user's question is converted into an embedding.
-      * **Query Pinecone:** This embedding is used to search Pinecone for the `top_k=3` most similar text chunks from the `WHO_HIV.pdf` data. These chunks provide context.
+      * **Query Pinecone:** This embedding is used to search Pinecone for the `top_k=3` most similar text chunks from the `Pharmacology_MB_2.pdf` data. These chunks provide context.
       * **Prepare Prompt:** The retrieved text chunks are inserted into a "system prompt" that instructs the AI (Gemini 2.0 Flash) on its role and how to use the provided information.
       * **Manage Memory:** It uses `ConversationBufferMemory` to keep track of the ongoing conversation. This allows the chatbot to understand follow-up questions.
       * **Call LLM:** It sends the formatted prompt (including context, chat history, and current question) to the Gemini 2.0 Flash model via `LLMChain`.
@@ -581,7 +581,7 @@ DSA_HIV/
 ├── main.py                # Runs the Streamlit chatbot application
 ├── pinecone_vector.py     # Processes the PDF and uploads to Pinecone
 ├── requirements.txt       # Lists all Python libraries needed for the project
-├── WHO_HIV.pdf            # (You add this) The knowledge base for the chatbot
+├── Pharmacology_MB_2.pdf  # (You add this) The knowledge base for the chatbot
 ├── venv/                  # (Optional, created by you) Virtual environment folder
 └── README.md              # This file!
 ```
@@ -620,7 +620,7 @@ DSA_HIV/
 
 If you have suggestions or improvements, please feel free to:
 
-1.  Fork the Project ([https://github.com/Ajisco/DSA\_HIV/fork](https://www.google.com/search?q=https://github.com/Ajisco/DSA_HIV/fork))
+1.  Fork the Project ([https://github.com/Abdulbasit4422/DSA\_HIV/fork](https://www.google.com/search?q=https://github.com/Abdulbasit4422/DSA_HIV/fork))
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
