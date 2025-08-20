@@ -94,7 +94,7 @@ Before you begin, make sure you have the following installed on your computer:
 2.  **Navigate to the directory** where you want to store the project (e.g., `cd Documents/Projects`).
 3.  **Clone the repository** using the following command:
     ```bash
-    git clone https://github.com/Ajisco/DSA_HIV.git
+    git clone https://github.com/Abdulbasit4422/DSA_HIV.git
     ```
 4.  **Navigate into the project directory:**
     ```bash
