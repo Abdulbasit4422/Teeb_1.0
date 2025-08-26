@@ -1,3 +1,4 @@
+# main.py (migrated - runnable style, no LLMChain / ConversationBufferMemory)
 import os
 import asyncio
 import nest_asyncio
@@ -6,14 +7,10 @@ from dotenv import load_dotenv
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.chains import LLMChain
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain.memory import ConversationBufferMemory
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from pinecone import Pinecone
 
-
-# Apply nest_asyncio patch
+# Apply nest_asyncio patch (keeps event loop friendly for notebooks/dev)
 nest_asyncio.apply()
 
 # Load environment variables
@@ -36,7 +33,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 pinecone_index = pc.Index("pharm")
 embed_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-# Define system prompt template
+# Define system prompt template (kept as a plain format string)
 system_prompt_template = """
 Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing in Pharmacology in CoMUI. Answer questions very very elaborately and accurately. Use the following information to answer the user's question:
 
@@ -45,7 +42,7 @@ Your name is CoMUI MB-2 Pharmacology Chatbot. You are a Professor specializing i
 Provide very extensively elaborate accurate and helpful responses based on the provided information and your expertise.
 """
 
-
+# Initialize chat history in session state
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         {
@@ -65,83 +62,126 @@ def render_chat_history():
             content = f"{content}\n\n<span class='timestamp'>⏰ {ts}</span>"
         with st.chat_message(role):
             st.markdown(content, unsafe_allow_html=True)
-            
 
-def generate_response(question):
-    """Generate a response using Pinecone retrieval and Gemini 2.0 Flash."""
+def _build_history_string():
+    """Assemble a textual chat history from session_state for prompt inclusion."""
+    parts = []
+    for msg in st.session_state.chat_history:
+        role = msg.get("role", "assistant")
+        content = msg.get("content", "")
+        if msg.get("role") == "user":
+            parts.append(f"User: {content}")
+        else:
+            parts.append(f"Assistant: {content}")
+    history_str = "\n".join(parts)
+    return history_str if history_str else "No prior conversation."
 
-    
-    # Embed the user's question
+def _extract_text_from_result(result):
+    """
+    Try a few common ways to extract text from the model result.
+    Supports:
+      - plain string result
+      - object with 'generations' or 'generations' style
+      - dict-like result with keys like 'text', 'output', 'answer'
+    """
+    # If it's already a str:
+    if isinstance(result, str):
+        return result
+
+    # LangChain LLMResult-like
+    try:
+        # some LLMs return an object with .generations -> list -> text
+        gens = getattr(result, "generations", None)
+        if gens:
+            # gens[0][0].text in some formats; handle a few shapes
+            first = gens[0]
+            if isinstance(first, list) and len(first) > 0:
+                candidate = getattr(first[0], "text", None) or getattr(first[0], "generation", None)
+                if candidate:
+                    return candidate
+            # if gens is a flat list of objects
+            if isinstance(first, (str,)):
+                return first
+    except Exception:
+        pass
+
+    # If it's dict-like
+    try:
+        if isinstance(result, dict):
+            for k in ("text", "output", "answer"):
+                if k in result and result[k]:
+                    return result[k]
+    except Exception:
+        pass
+
+    # fallback to str()
+    return str(result)
+
+def generate_response(question: str) -> str:
+    """Generate a response using Pinecone retrieval and Gemini 2.0 Flash via runnable invocation."""
+
+    # 1) Embed the user's question
     query_embed = embed_model.embed_query(question)
-    query_embed = [float(val) for val in query_embed]  # Ensure standard floats
-    
-    # Query Pinecone for relevant documents - MODIFIED: top_k=3
+    query_embed = [float(val) for val in query_embed]  # ensure floats
+
+    # 2) Query Pinecone for relevant documents
     results = pinecone_index.query(
         vector=query_embed,
-        top_k=5,  # CHANGED from 2 to 3
+        top_k=5,
         include_values=False,
         include_metadata=True
     )
-    
-    # Extract document contents - MODIFIED: Added terminal printing
+
+    # 3) Build retrieved doc content
     doc_contents = []
-    print("\n" + "="*50)
-    print(f"RETRIEVED DOCUMENTS FOR: '{question}'")
-    for i, match in enumerate(results.get('matches', [])):
-        text = match['metadata'].get('text', '')
-        doc_contents.append(text)
-        print(f"\nDOCUMENT {i+1}:\n{text}\n")
-    print("="*50 + "\n")
-    
-    doc_content = "\n".join(doc_contents).replace('{', '{{').replace('}', '}}') if doc_contents else "No additional information found."
-    
-    # Format the system prompt with retrieved content
-    formatted_prompt = system_prompt_template.format(doc_content=doc_content)
-    
-    # Rebuild chat history from session state
-    chat_history = ChatMessageHistory()
-    for msg in st.session_state.chat_history:
-        if msg["role"] == "user":
-            chat_history.add_user_message(msg["content"])
-        elif msg["role"] == "assistant":
-            chat_history.add_ai_message(msg["content"])
-    
-    # Initialize memory with chat history
-    memory = ConversationBufferMemory(
-        memory_key="chat_history",
-        chat_memory=chat_history,
-        return_messages=True
+    for match in results.get("matches", []):
+        text = (match.get("metadata") or {}).get("text", "")
+        if text:
+            doc_contents.append(text)
+    doc_content = "\n\n".join(doc_contents) if doc_contents else "No additional information found."
+
+    # 4) Format system prompt (escape braces for template safety if necessary)
+    #    (we already expect doc_content to be plain text)
+    formatted_system = system_prompt_template.format(doc_content=doc_content)
+
+    # 5) Rebuild history string
+    history_string = _build_history_string()
+
+    # 6) Assemble final prompt text: system + conversation history + user question
+    #    This is a simple pattern that avoids the old memory object for now.
+    final_prompt_text = (
+        f"{formatted_system}\n\n"
+        f"Conversation history:\n{history_string}\n\n"
+        f"User: {question}\n\nAssistant:"
     )
-    
-    # Create the conversation prompt
-    prompt = ChatPromptTemplate(
-        messages=[
-            SystemMessagePromptTemplate.from_template(formatted_prompt),
-            MessagesPlaceholder(variable_name="chat_history"),
-            HumanMessagePromptTemplate.from_template("{question}")
-        ]
-    )
-    
-    # Initialize Gemini 2.0 Flash model with explicit client
+
+    # 7) Initialize Gemini chat model (runnable)
     chat = ChatGoogleGenerativeAI(
         model="gemini-2.0-flash",
         temperature=0.2,
         google_api_key=GOOGLE_API_KEY
     )
-    
-    # Create the conversation chain
-    conversation = LLMChain(
-        llm=chat,
-        prompt=prompt,
-        memory=memory,
-        verbose=True
-    )
-    
-    # Generate the response
-    res = conversation({"question": question})  # synchronous call
-    # safe extraction — adapt if your wrapper uses a different key
-    text = res.get("text") or res.get("output") or res.get("answer") or str(res)
-    return text
+
+    # 8) Invoke the model (runnable invoke). Many LangChain runnables implement .invoke(...)
+    try:
+        result = chat.invoke(final_prompt_text)
+    except AttributeError:
+        # If .invoke is not available for this wrapper, try calling as a regular call
+        # older wrappers may implement __call__ or .generate; attempt safe fallbacks
+        try:
+            result = chat(final_prompt_text)
+        except Exception:
+            try:
+                result = chat.generate(final_prompt_text)
+            except Exception as e:
+                # give a helpful error message
+                st.error(f"Failed to invoke the LLM wrapper: {e}")
+                return "Sorry — I couldn't reach the language model. Check your model wrapper."
+
+    # 9) Extract text robustly
+    assistant_text = _extract_text_from_result(result) or "Sorry — the model returned no text."
+
+    return assistant_text
 
 # --- App Title Bar with Icon ---
 st.markdown("""
