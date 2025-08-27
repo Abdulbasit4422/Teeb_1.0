@@ -129,11 +129,11 @@ def generate_response(question):
         google_api_key=GOOGLE_API_KEY
     )
     # Create the conversation chain
-    llm = chat
-    conversation = RunnableSequence(steps=[prompt | llm])
+    conversation = RunnableSequence(prompt, chat)
 
     # Generate the response
     res = conversation.invoke({"question": question})  # synchronous call
+
     # safe extraction — adapt if your wrapper uses a different key
     text = res.get("text") or res.get("output") or res.get("answer") or str(res)
     return text
