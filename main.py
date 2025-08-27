@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema.runnable import RunnableSequence
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone
@@ -100,11 +101,13 @@ def generate_response(question):
     
     # Rebuild chat history from session state
     chat_history = ChatMessageHistory()
+    lc_chat_history = []
     for msg in st.session_state.chat_history:
-        if msg["role"] == "user":
-            chat_history.add_user_message(msg["content"])
-        elif msg["role"] == "assistant":
-            chat_history.add_ai_message(msg["content"])
+        for msg in st.session_state.chat_history:
+         if msg["role"] == "user":
+            lc_chat_history.append(HumanMessage(content=msg["content"]))
+         elif msg["role"] == "assistant":
+            lc_chat_history.append(AIMessage(content=msg["content"]))
     
     # Initialize memory with chat history
     memory = ConversationBufferMemory(
@@ -132,7 +135,10 @@ def generate_response(question):
     conversation = RunnableSequence(prompt, chat)
 
     # Generate the response
-    res = conversation.invoke({"question": question})  # synchronous call
+    res = conversation.invoke({
+        "question": question,
+        "chat_history": chat_history  # Pass the history here
+    }) # synchronous call
 
     # safe extraction — adapt if your wrapper uses a different key
     text = res.get("text") or res.get("output") or res.get("answer") or str(res)
@@ -177,7 +183,7 @@ if user_input:
 
     # generate assistant response
     with st.spinner("Deep Reasoning Activated..."):
-        assistant_text = generate_response(user_input)
+        assistant_text = generate_response(user_input, lc_chat_history)
 
     assistant_ts = datetime.now(ZoneInfo("Africa/Lagos")).strftime("%H:%M:%S")
     st.session_state.chat_history.append({"role": "assistant", "content": assistant_text, "timestamp": assistant_ts})
