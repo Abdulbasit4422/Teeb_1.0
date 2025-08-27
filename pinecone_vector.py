@@ -82,7 +82,7 @@ def concurrent_embed_documents(embed_model, documents, batch_size=100, max_worke
     return all_embeddings, all_contents
 
 # Load documents from PDF
-pdf_file_path = 'Pharmacology_MB_2.pdf'
+pdf_file_path = 'Pharmacology_MB_2_merged.pdf'
 pdf_loader = PyPDFLoader(pdf_file_path)
 documents = pdf_loader.load()
 
