@@ -141,8 +141,7 @@ def generate_response(question):
     }) # synchronous call
 
     # safe extraction — adapt if your wrapper uses a different key
-    text = res.get("text") or res.get("output") or res.get("answer") or str(res)
-    return text
+    return res.content
 
 # --- App Title Bar with Icon ---
 st.markdown("""
