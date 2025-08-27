@@ -137,7 +137,7 @@ def generate_response(question):
     # Generate the response
     res = conversation.invoke({
         "question": question,
-        "chat_history": chat_history  # Pass the history here
+        "chat_history": lc_chat_history  # Pass the history here
     }) # synchronous call
 
     # safe extraction — adapt if your wrapper uses a different key
@@ -183,7 +183,7 @@ if user_input:
 
     # generate assistant response
     with st.spinner("Deep Reasoning Activated..."):
-        assistant_text = generate_response(user_input, lc_chat_history)
+        assistant_text = generate_response(user_input)
 
     assistant_ts = datetime.now(ZoneInfo("Africa/Lagos")).strftime("%H:%M:%S")
     st.session_state.chat_history.append({"role": "assistant", "content": assistant_text, "timestamp": assistant_ts})
