@@ -127,7 +127,7 @@ def generate_response(question):
     
     # Initialize Gemini 2.0 Flash model with explicit client
     chat = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         temperature=0.2,
         google_api_key=GOOGLE_API_KEY
     )
